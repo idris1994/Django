@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 28px;
+        }
+        
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .home-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .home-btn i {
+            margin-right: 8px;
+        }
+        
+        .dashboard {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+        }
+        
+        thead {
+            background-color: #f8f9fa;
+        }
+        
+        th {
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e1e4e8;
+        }
+        
+        tr {
+            border-bottom: 1px solid #eaecef;
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #eaecef;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .category {
+            background-color: #e8f4fc;
+            color: #3498db;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: #27ae60;
+        }
+        
+        .discount {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+        
+        .description {
+            max-width: 250px;
+            color: #7f8c8d;
+        }
+        
+        .type-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .digital {
+            background-color: #e7f6ec;
+            color: #27ae60;
+        }
+        
+        .physical {
+            background-color: #fef5e7;
+            color: #f39c12;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+        
+        .update-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .update-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .page-btn {
+            padding: 8px 16px;
+            background-color: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .page-btn.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        /* Edit Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #2c3e50;
+        }
+        
+        .product-edit-top {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .product-gallery {
+            flex: 1;
+        }
+        
+        .product-main-image {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .product-main-image img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .product-image-gallery {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .product-gallery-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .product-gallery-item.active {
+            border-color: #3498db;
+        }
+        
+        .product-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-details {
+            flex: 1;
+        }
+        
+        .product-title-edit {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dce1e6;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .details-filter-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+        
+        .details-filter-row label {
+            min-width: 80px;
+            margin-bottom: 0;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .select-custom {
+            flex: 1;
+        }
+        
+        .product-nav-thumbs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .product-nav-thumbs a {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .product-nav-thumbs a.active {
+            border-color: #3498db;
+        }
+        
+        .product-nav-thumbs img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-details-quantity {
+            flex: 1;
+        }
+        
+        .product-details-action {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .btn-product {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-product i {
+            margin-right: 8px;
+        }
+        
+        .btn-product:hover {
+            background-color: #2980b9;
+        }
+        
+        .details-action-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-wishlist {
+            background-color: #e74c3c;
+        }
+        
+        .btn-wishlist:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-compare {
+            background-color: #f39c12;
+        }
+        
+        .btn-compare:hover {
+            background-color: #d35400;
+        }
+        
+        .product-details-tab {
+            margin-top: 40px;
+        }
+        
+        .nav-pills {
+            display: flex;
+            border-bottom: 1px solid #e1e4e8;
+            margin-bottom: 25px;
+        }
+        
+        .nav-item {
+            margin-right: 30px;
+        }
+        
+        .nav-link {
+            padding: 12px 0;
+            color: #7f8c8d;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .nav-link.active {
+            color: #3498db;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #3498db;
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .product-desc-content h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .product-desc-content p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .product-desc-content ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+        
+        .product-desc-content li {
+            margin-bottom: 10px;
+        }
+        
+        .save-changes {
+            display: block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .save-changes:hover {
+            background-color: #219653;
+        }
+        
+        @media (max-width: 992px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                min-width: 150px;
+            }
+            
+            .description {
+                max-width: 200px;
+            }
+            
+            .product-edit-top {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .details-filter-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-details-action {
+                flex-direction: column;
+            }
+            
+            .details-action-wrapper {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .nav-pills {
+                flex-wrap: wrap;
+            }
+            
+            .nav-item {
+                margin-right: 15px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Here, you can see all the details of your Products</h1>
+            <a href="{% url 'dashboard_home' %}" class="home-btn">
+                <i class="fas fa-home"></i> Go to home
+            </a>
+        </header>
+        
+        <div class="dashboard">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td class="product-name">{{ product.name }}</td>
+                        <td>
+                            <img class="product-image" src="{{product.featured_image.url}}" alt="{{ product.name }}">
+                        </td>
+                        <td><span class="category">{{ product.category.name }}</span></td>
+                        <td class="price">${{ product.price }}</td>
+                        <td class="discount">{{ product.discount }}%</td>
+                        <td class="description">{{ product.description|truncatechars:50 }}</td>
+                        <td>
+                            {% if product.digital %}
+                            <span class="type-badge digital">Digital</span>
+                            {% else %}
+                            <span class="type-badge physical">Physical</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn update-btn" onclick="openEditModal('{{ product.id }}')">
+                                    <i class="fas fa-edit"></i> Update
+                                </button>
+                                <button class="btn delete-btn">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            
+            <div class="product-details-top">
+                <div class="product-edit-top">
+                    <div class="product-gallery">
+                        <figure class="product-main-image">
+                            <img id="product-zoom" src="assets/images/products/single/1.jpg" alt="product image">
+                        </figure>
+
+                        <div id="product-zoom-gallery" class="product-image-gallery">
+                            <a class="product-gallery-item active" href="#">
+                                <img src="assets/images/products/single/1-small.jpg" alt="product side">
+                            </a>
+
+                            <a class="product-gallery-item" href="#">
+                                <img src="assets/images/products/single/2-small.jpg" alt="product cross">
+                            </a>
+
+                            <a class="product-gallery-item" href="#">
+                                <img src="assets/images/products/single/3-small.jpg" alt="product with model">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="product-details">
+                        <h1 class="product-title-edit">
+                            <input type="text" class="form-control" value="Dark yellow lace cut out swing dress">
+                        </h1>
+
+                        <div class="form-group">
+                            <label for="product-price">Price</label>
+                            <input type="number" id="product-price" class="form-control" value="84.00" step="0.01">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" class="form-control">Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus.</textarea>
+                        </div>
+
+                        <div class="details-filter-row">
+                            <label>Color:</label>
+                            <div class="product-nav product-nav-thumbs">
+                                <a href="#" class="active">
+                                    <img src="assets/images/products/single/1-thumb.jpg" alt="product desc">
+                                </a>
+                                <a href="#">
+                                    <img src="assets/images/products/single/2-thumb.jpg" alt="product desc">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="details-filter-row">
+                            <label for="size">Size:</label>
+                            <div class="select-custom">
+                                <select name="size" id="size" class="form-control">
+                                    <option value="#" selected="selected">Select a size</option>
+                                    <option value="s">Small</option>
+                                    <option value="m">Medium</option>
+                                    <option value="l">Large</option>
+                                    <option value="xl">Extra Large</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="details-filter-row">
+                            <label for="qty">Qty:</label>
+                            <div class="product-details-quantity">
+                                <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                            </div>
+                        </div>
+
+                        <div class="product-details-action">
+                            <a href="#" class="btn-product btn-cart"><span>Update Product</span></a>
+
+                            <div class="details-action-wrapper">
+                                <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
+                                <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-details-tab">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab" role="tab" aria-controls="product-info-tab" aria-selected="false">Additional information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
+                        <div class="product-desc-content">
+                            <h3>Product Information</h3>
+                            <textarea class="form-control" rows="6">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus.</textarea>
+                            <h3>Key Features</h3>
+                            <textarea class="form-control" rows="4">- Nunc nec porttitor turpis. In eu risus enim. In vitae mollis elit. 
+- Vivamus finibus vel mauris ut vehicula.
+- Nullam a magna porttitor, dictum risus nec, faucibus sapien.</textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="product-info-tab" role="tabpanel" aria-labelledby="product-info-link">
+                        <div class="product-desc-content">
+                            <h3>Information</h3>
+                            <textarea class="form-control" rows="4">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.</textarea>
+
+                            <h3>Fabric & care</h3>
+                            <textarea class="form-control" rows="6">- Faux suede fabric
+- Gold tone metal hoop handles.
+- RI branding
+- Snake print trim interior 
+- Adjustable cross body strap
+- Height: 31cm; Width: 32cm; Depth: 12cm; Handle Drop: 61cm</textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
+                        <div class="product-desc-content">
+                            <h3>Delivery & returns</h3>
+                            <textarea class="form-control" rows="5">We deliver to over 100 countries around the world. For full details of the delivery options we offer, please view our Delivery information.
+We hope you'll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our Returns information.</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="save-changes">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        // Simple JavaScript for button interactions
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                if(confirm('Are you sure you want to delete this product?')) {
+                    alert('Delete functionality would be implemented here.');
+                }
+            });
+        });
+        
+        // Pagination buttons
+        document.querySelectorAll('.page-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelector('.page-btn.active').classList.remove('active');
+                button.classList.add('active');
+            });
+        });
+        
+        // Modal functionality
+        function openEditModal(productId) {
+            document.getElementById('editModal').style.display = 'block';
+            // In a real application, you would fetch product data based on productId
+            // and populate the form fields accordingly
+            console.log('Editing product with ID:', productId);
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+        
+        // Tab functionality
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and panes
+                document.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding pane
+                const paneId = this.getAttribute('href').substring(1);
+                document.getElementById(paneId).classList.add('active');
+            });
+        });
+        
+        // Image gallery functionality
+        document.querySelectorAll('.product-gallery-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all items
+                document.querySelectorAll('.product-gallery-item').forEach(i => i.classList.remove('active'));
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Update main image
+                const mainImage = document.getElementById('product-zoom');
+                const newImage = this.querySelector('img').getAttribute('src').replace('-small', '');
+                mainImage.setAttribute('src', newImage);
+            });
+        });
+        
+        // Color selection functionality
+        document.querySelectorAll('.product-nav-thumbs a').forEach(thumb => {
+            thumb.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all thumbs
+                document.querySelectorAll('.product-nav-thumbs a').forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked thumb
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
